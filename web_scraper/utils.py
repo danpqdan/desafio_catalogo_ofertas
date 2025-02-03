@@ -24,9 +24,6 @@ def buscar_mercado_livre():
     campo_busca_parse_com_espaco = urllib.parse.quote(campo_busca)
     print(f"URL carregado: {URL_MERCADO_LIVRE + campo_busca_parse_sem_espaco + '#D[A:' + campo_busca + ']'}")
     driver.get(URL_MERCADO_LIVRE + campo_busca_parse_sem_espaco + "#D[A:" + campo_busca + "]")
-
-    # hrefs = driver.find_elements(By.XPATH, "//a[contains(@class, 'poly-component__title')]")
-    # produtos = driver.find_elements(By.CSS_SELECTOR, ".ui-search-layout__item")
     
     produtos = driver.find_elements(By.CSS_SELECTOR, ".ui-search-layout.ui-search-layout--grid li")
     
@@ -34,7 +31,6 @@ def buscar_mercado_livre():
         try:
             nome = produto.find_element(By.XPATH, ".//h3/a").text
             link = produto.find_element(By.XPATH, "//a[contains(@class, 'poly-component__title')]").get_attribute('href')
-            # link = hrefs[index].get_attribute('href')
             preco = produto.find_element(By.CSS_SELECTOR, ".poly-price__current .andes-money-amount__fraction").text
             preco = float(preco.replace('.', '').replace(',', '.'))
             div_portada = produto.find_element(By.CLASS_NAME, "poly-card__portada")
@@ -60,8 +56,6 @@ def buscar_mercado_livre():
                 preco_sem_desconto = None
                 percentual_desconto = None
             try:
-                # tipo_entrega = produto.find_element(By.CSS_SELECTOR, "span.poly-component__shipped-from")         try:
-                # print(parcelamento)
                 parcelamento = produto.find_element(By.XPATH, "//span[@class='poly-price__installments']").text
                 
                 
