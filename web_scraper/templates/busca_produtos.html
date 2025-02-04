@@ -1,38 +1,67 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Ofertas</title>
-</head>
-<body>
-    <h1>Produtos Raspados do Mercado Livre</h1>
-    <a href="{% url 'atualizar_produtos' %}">Atualizar Produtos</a>
-    <table border="1">
-        <tr>
-            <th>Imagem</th>
-            <th>Nome</th>
-            <th>Preço</th>
-            <th>Preço Sem Desconto</th>
-            <th>% Desconto</th>
-            <th>Parcelamento</th>
-            <th>Tipo de Entrega</th>
-            <th>Frete Grátis</th>
-            <th>Link</th>
-        </tr>
-        {% for produto in produtos %}
-        <tr>
-            <td><img src="{{ produto.imagem }}" width="100"></td>
-            <td>{{ produto.nome }}</td>
-            <td>R$ {{ produto.preco }}</td>
-            <td>{% if produto.preco_sem_desconto %} R$ {{ produto.preco_sem_desconto }} {% endif %}</td>
-            <td>{% if produto.percentual_desconto %} {{ produto.percentual_desconto }}% {% endif %}</td>
-            <td>{{ produto.parcelamento }}</td>
-            <td>{{ produto.tipo_entrega }}</td>
-            <td>{% if produto.frete_gratis %} ✅ {% else %} ❌ {% endif %}</td>
-            <td><a href="{{ produto.link }}" target="_blank">Ver Produto</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+<form method="POST" action="{% url 'atualizar_produtos' %}">
+    {% csrf_token %}
+    <label for="termo_busca">Buscar no Mercado Livre:</label>
+    <input type="text" id="termo_busca" name="termo_busca" placeholder="Digite o termo para buscar no Mercado Livre">
+    <button type="submit">Atualizar Produtos</button>
+</form>
+
+
+<form method="GET" action="{% url 'filtrar_produto' %}">
+    <input type="text" name="q" placeholder="Buscar produtos..." value="{{ request.GET.q }}">
+
+    <!-- Filtro de Frete Grátis -->
+    <label>
+        <input type="checkbox" name="frete_gratis" value="sim" {% if request.GET.frete_gratis == 'sim' %}checked{% endif %}> Frete Grátis
+    </label>
+
+    <!-- Filtro de Entrega pelo Full -->
+    <label>
+        <input type="checkbox" name="full_delivery" value="sim" {% if request.GET.full_delivery == 'sim' %}checked{% endif %}> Entregue pelo Full
+    </label>
+
+    <!-- Ordenação -->
+    <select name="ordenar_por">
+        <option value="">Ordenar por</option>
+        <option value="preco_maior" {% if request.GET.ordenar_por == 'preco_maior' %}selected{% endif %}>Maior Preço</option>
+        <option value="preco_menor" {% if request.GET.ordenar_por == 'preco_menor' %}selected{% endif %}>Menor Preço</option>
+        <option value="desconto_maior" {% if request.GET.ordenar_por == 'desconto_maior' %}selected{% endif %}>Maior Desconto</option>
+    </select>
+
+    <button type="submit">Buscar</button>
+</form>
+<table border="1">
+    <tr>
+        <th>Imagem</th>
+        <th>Nome</th>
+        <th>Preço</th>
+        <th>Preço Sem Desconto</th>
+        <th>% Desconto</th>
+        <th>Parcelamento</th>
+        <th>Tipo de Entrega</th>
+        <th>Frete Grátis</th>
+        <th>Link</th>
+    </tr>
+    {% for produto in produtos %}
+    <tr>
+        {% with produto.imagens.all|first as imagem %}
+            <td><img src="{{ imagem.url_imagem }}" width="100"></td>
+        {% endwith %}
+        <td>{{ produto.nome }}</td>
+        <td>R$ {{ produto.preco }}</td>
+        <td>{% if produto.preco_sem_desconto %} R$ {{ produto.preco_sem_desconto }} {% endif %}</td>
+        <td>{% if produto.percentual_desconto %} {{ produto.percentual_desconto }}% {% endif %}</td>
+        <td>{{ produto.parcelamento }}</td>
+        <td>{{ produto.tipo_entrega }}</td>
+        <td>
+            {% if produto.frete_gratis == True %}
+                ✅ Frete Grátis
+            {% elif produto.frete_gratir == True  %} 
+                ✅ Primera compra gratis
+            {% else %}
+                ❌ Não possui frete gratis
+            {% endif %}
+        </td>
+        <td><a href="{{ produto.link }}" target="_blank">Ver Produto</a></td>
+    </tr>
+    {% endfor %}
+</table>
