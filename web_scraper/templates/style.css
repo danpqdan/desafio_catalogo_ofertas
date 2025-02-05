@@ -1,0 +1,188 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px; 
+    padding: 20px;
+    background-color: #f8f9fa;
+    text-align: center;
+    flex-wrap: wrap;
+    width: 100vw;
+}
+
+.nav-bar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    width: 100vw;
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 20px;
+    width: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: 4%;
+}
+
+.close-menu {
+    font-size: 30px;
+    width: 20px;
+    background: none;
+    border: none;
+    color: #333;
+    position: absolute;
+    right: 4%;
+    cursor: pointer;
+}
+
+#menu-items {
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.wraper-menu-items {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    transition: 1s ease-out ;
+    width: 100%;
+}
+
+.container-atualizar-produtos{
+    width: 100%;
+}
+
+.container-menu-filtro{
+    width: 100%;
+}
+
+.container-campo-busca-ml{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.container-itens-filtro{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+input[type="text"], select, button {
+    padding: 10px;
+    width: 100%;
+    max-width: 80%; /* Define o tamanho máximo */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+/* Contêiner de Cards - com grid responsivo */
+.produto-container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+/* Estilo dos cards */
+.produto-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+.produto-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+.produto-card h3 {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+.produto-card p {
+    margin: 5px 0;
+}
+.produto-card .frete {
+    font-size: 0.9em;
+    color: green;
+}
+.produto-card .link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+.produto-card .link:hover {
+    background-color: #0056b3;
+}
+@media (max-width: 768px) {
+    .header {
+        position: relative;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Menu padrão inicialmente escondido */
+    #menu-items {
+        display: flex;
+        flex-direction: column;
+        background-color: #f1f1f1;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateX(100%); /* Escondido à direita */
+        opacity: 0;
+    }
+
+    /* Menu ativo (visível com transição) */
+    #menu-items.active {
+        transform: translateX(0); /* Move o menu para dentro */
+        opacity: 1; /* Torna o menu visível */
+    }
+
+    /* Estilos do container e do botão de fechar */
+    .wraper-menu-items {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .close-menu {
+        font-size: 30px;
+        width: 20px;
+        background: none;
+        border: none;
+        color: #333;
+        position: absolute;
+        right: 4%;
+        top: 4%;
+        cursor: pointer;
+    }    
+    .produto-container {
+        grid-template-columns: 1fr;
+    }
+}

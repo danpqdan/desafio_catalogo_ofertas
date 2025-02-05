@@ -1,124 +1,116 @@
 
+{% load static %}
 
-<form method="POST" action="{% url 'atualizar_produtos' %}">
-    {% csrf_token %}
-    <label for="termo_busca">Buscar no Mercado Livre:</label>
-    <input type="text" id="termo_busca" name="termo_busca" placeholder="Digite o termo para buscar no Mercado Livre">
-    <button type="submit">Atualizar Produtos</button>
-</form>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos</title>
+    <link rel="stylesheet" href="{% static 'root.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
 
-
-<form method="GET" action="{% url 'filtrar_produto' %}">
-    <input type="text" name="q" placeholder="Buscar produtos..." value="{{ request.GET.q }}">
-
-    <!-- Filtro de Frete Grátis -->
-    <label>
-        <input type="checkbox" name="frete_gratis" value="True" 
-        {% if request.GET.frete_gratis %}checked{% endif %}> 
-        Frete Grátis
-    </label>    
-    <!-- Filtro de Entrega pelo Full -->
-    <label>
-        <input type="checkbox" name="tipo_entrega" value="Full" 
-            {% if request.GET.tipo_entrega == "Full" %}checked{% endif %}> 
-        Entregue pelo Full
-    </label>
-    <!-- Ordenação -->
-    <select name="ordenar_por">
-        <option value="">Ordenar por</option>
-        <option value="preco_maior" {% if request.GET.ordenar_por == 'preco_maior' %}selected{% endif %}>Maior Preço</option>
-        <option value="preco_menor" {% if request.GET.ordenar_por == 'preco_menor' %}selected{% endif %}>Menor Preço</option>
-        <option value="desconto_maior" {% if request.GET.ordenar_por == 'desconto_maior' %}selected{% endif %}>Maior Desconto</option>
-    </select>
-
-    <button type="submit">Buscar</button>
-</form>
-<div class="produto-container">
-    {% for produto in produtos %}
-    <div class="produto-card">
-        {% with produto.imagens.all|first as imagem %}
-            <img src="{{ imagem.url_imagem }}" alt="{{ produto.nome }}">
-        {% endwith %}
-        <h3>{{ produto.nome }}</h3>
-        <p><strong>Preço:</strong> R$ {{ produto.preco }}</p>
-        {% if produto.preco_sem_desconto %}
-            <p><strong>Preço Sem Desconto:</strong> R$ {{ produto.preco_sem_desconto }}</p>
-        {% endif %}
-        {% if produto.percentual_desconto %}
-            <p><strong>% Desconto:</strong> {{ produto.percentual_desconto }}%</p>
-        {% endif %}
-        <p><strong>Parcelamento:</strong> {{ produto.parcelamento }}</p>
-        <p><strong>Tipo de Entrega:</strong> {{ produto.tipo_entrega }}</p>
-        <p class="frete">
-            {% if produto.frete_gratis == True %}
-                ✅ Frete Grátis
-            {% elif produto.frete_gratis == False %}
-                ❌ Não possui frete grátis
-            {% else %}
-                ✅ Primeira compra grátis
+<body>
+    <header class="header">
+        <div class="nav-bar">
+            <!-- Botão de Toggle para dispositivos móveis -->
+            <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+    
+            <div class="wraper-menu-items" id="menu-items">
+                <!-- Formulário de atualização de produtos -->
+                <button class="close-menu" id="close-menu">&times;</button>
+                <div class="container-atualizar-produtos">
+                    <form method="POST" action="{% url 'atualizar_produtos' %}" class="form-atualizar-produtos">
+                        <!-- {% csrf_token %} Funcionalidade inativa-->
+                        <div class="container-campo-busca-ml">
+                            <label class='lbl_termo_busca' for="termo_busca">Buscar no Mercado Livre:</label>
+                            <input class='inp_termo_busca' type="text" id="termo_busca" name="termo_busca" placeholder="Digite o termo para buscar no Mercado Livre">
+                            <button type="submit">Atualizar Produtos</button>
+                        </div>
+                    </form>
+                </div>    
+    
+                <!-- Formulário de filtro de produtos -->
+                <div class="container-menu-filtro">
+                    <form method="GET" action="{% url 'filtrar_produto' %}" class="form-filtro">
+                        <div class="container-itens-filtro">
+                            <label>Filtros: </label>
+                            <input type="text" name="q" placeholder="Buscar produtos..." value="{{ request.GET.q }}" class="input-filtrar">
+                            <div class="filtros-linha">
+                                <label>
+                                    <input type="checkbox" name="frete_gratis" value="True" {% if request.GET.frete_gratis %}checked{% endif %}> 
+                                    Frete Grátis
+                                </label>    
+                                <label>
+                                    <input type="checkbox" name="tipo_entrega" value="Full" {% if request.GET.tipo_entrega == "Full" %}checked{% endif %}> 
+                                    Entregue pelo Full
+                                </label>
+                            </div>
+    
+                            <div class="ordenacao-linha">
+                                <select name="ordenar_por">
+                                    <option value="">Ordenar por</option>
+                                    <option value="preco_maior" {% if request.GET.ordenar_por == 'preco_maior' %}selected{% endif %}>Maior Preço</option>
+                                    <option value="preco_menor" {% if request.GET.ordenar_por == 'preco_menor' %}selected{% endif %}>Menor Preço</option>
+                                    <option value="desconto_maior" {% if request.GET.ordenar_por == 'desconto_maior' %}selected{% endif %}>Maior Desconto</option>
+                                </select>
+                            </div>
+                        
+                            <button type="submit">Buscar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </header>
+    <div class="produto-container">
+        {% for produto in produtos %}
+        <div class="produto-card">
+            {% with produto.imagens.all|first as imagem %}
+                <img src="{{ imagem.url_imagem }}" alt="{{ produto.nome }}">
+            {% endwith %}
+            <h3>{{ produto.nome }}</h3>
+            <p><strong>Preço:</strong> R$ {{ produto.preco }}</p>
+            {% if produto.preco_sem_desconto %}
+                <p><strong>Preço Sem Desconto:</strong> R$ {{ produto.preco_sem_desconto }}</p>
             {% endif %}
-        </p>
-        <a href="{{ produto.link }}" class="link" target="_blank">Ver Produto</a>
+            {% if produto.percentual_desconto %}
+                <p><strong>% Desconto:</strong> {{ produto.percentual_desconto }}%</p>
+            {% endif %}
+            <p><strong>Parcelamento:</strong> {{ produto.parcelamento }}</p>
+            <p><strong>Tipo de Entrega:</strong> {{ produto.tipo_entrega }}</p>
+            <p class="frete">
+                {% if produto.frete_gratis == True %}
+                    ✅ Frete Grátis
+                {% elif produto.frete_gratis == False %}
+                    ❌ Não possui frete grátis
+                {% else %}
+                    ✅ Primeira compra grátis
+                {% endif %}
+            </p>
+            <a href="{{ produto.link }}" class="link" target="_blank">Ver Produto</a>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-<style>
-    /* Contêiner de Cards - com grid responsivo */
-    .produto-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 colunas em telas grandes */
-        gap: 20px;
-        padding: 20px;
-    }
 
-    /* Definições para telas pequenas (1 coluna) */
-    @media (max-width: 768px) {
-        .produto-container {
-            grid-template-columns: 1fr; /* 1 coluna em telas pequenas */
-        }
-    }
 
-    /* Estilo dos cards */
-    .produto-card {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 15px;
-        background-color: #f9f9f9;
-        text-align: center;
-    }
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuItems = document.getElementById('menu-items');
+        const closeMenu = document.getElementById('close-menu');
 
-    .produto-card img {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-    }
+        // Alternar a exibição do menu quando o botão de toggle for clicado
+        menuToggle.addEventListener('click', () => {
+            menuItems.classList.toggle('active');
+        });
 
-    .produto-card h3 {
-        font-size: 1.2em;
-        margin-top: 10px;
-    }
+        // Fechar o menu quando o botão de fechar for clicado
+        closeMenu.addEventListener('click', () => {
+            menuItems.classList.remove('active');
+        });
+    </script>
+</body>
 
-    .produto-card p {
-        margin: 5px 0;
-    }
 
-    .produto-card .frete {
-        font-size: 0.9em;
-        color: green;
-    }
-
-    .produto-card .link {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 8px 15px;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-
-    .produto-card .link:hover {
-        background-color: #0056b3;
-    }
-</style>
