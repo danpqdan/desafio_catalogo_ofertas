@@ -1,3 +1,5 @@
+
+
 <form method="POST" action="{% url 'atualizar_produtos' %}">
     {% csrf_token %}
     <label for="termo_busca">Buscar no Mercado Livre:</label>
@@ -11,14 +13,16 @@
 
     <!-- Filtro de Frete Grátis -->
     <label>
-        <input type="checkbox" name="frete_gratis" value="sim" {% if request.GET.frete_gratis == 'sim' %}checked{% endif %}> Frete Grátis
-    </label>
-
+        <input type="checkbox" name="frete_gratis" value="True" 
+        {% if request.GET.frete_gratis %}checked{% endif %}> 
+        Frete Grátis
+    </label>    
     <!-- Filtro de Entrega pelo Full -->
     <label>
-        <input type="checkbox" name="full_delivery" value="sim" {% if request.GET.full_delivery == 'sim' %}checked{% endif %}> Entregue pelo Full
+        <input type="checkbox" name="tipo_entrega" value="Full" 
+            {% if request.GET.tipo_entrega == "Full" %}checked{% endif %}> 
+        Entregue pelo Full
     </label>
-
     <!-- Ordenação -->
     <select name="ordenar_por">
         <option value="">Ordenar por</option>
@@ -29,39 +33,92 @@
 
     <button type="submit">Buscar</button>
 </form>
-<table border="1">
-    <tr>
-        <th>Imagem</th>
-        <th>Nome</th>
-        <th>Preço</th>
-        <th>Preço Sem Desconto</th>
-        <th>% Desconto</th>
-        <th>Parcelamento</th>
-        <th>Tipo de Entrega</th>
-        <th>Frete Grátis</th>
-        <th>Link</th>
-    </tr>
+<div class="produto-container">
     {% for produto in produtos %}
-    <tr>
+    <div class="produto-card">
         {% with produto.imagens.all|first as imagem %}
-            <td><img src="{{ imagem.url_imagem }}" width="100"></td>
+            <img src="{{ imagem.url_imagem }}" alt="{{ produto.nome }}">
         {% endwith %}
-        <td>{{ produto.nome }}</td>
-        <td>R$ {{ produto.preco }}</td>
-        <td>{% if produto.preco_sem_desconto %} R$ {{ produto.preco_sem_desconto }} {% endif %}</td>
-        <td>{% if produto.percentual_desconto %} {{ produto.percentual_desconto }}% {% endif %}</td>
-        <td>{{ produto.parcelamento }}</td>
-        <td>{{ produto.tipo_entrega }}</td>
-        <td>
+        <h3>{{ produto.nome }}</h3>
+        <p><strong>Preço:</strong> R$ {{ produto.preco }}</p>
+        {% if produto.preco_sem_desconto %}
+            <p><strong>Preço Sem Desconto:</strong> R$ {{ produto.preco_sem_desconto }}</p>
+        {% endif %}
+        {% if produto.percentual_desconto %}
+            <p><strong>% Desconto:</strong> {{ produto.percentual_desconto }}%</p>
+        {% endif %}
+        <p><strong>Parcelamento:</strong> {{ produto.parcelamento }}</p>
+        <p><strong>Tipo de Entrega:</strong> {{ produto.tipo_entrega }}</p>
+        <p class="frete">
             {% if produto.frete_gratis == True %}
                 ✅ Frete Grátis
-            {% elif produto.frete_gratir == True  %} 
-                ✅ Primera compra gratis
+            {% elif produto.frete_gratis == False %}
+                ❌ Não possui frete grátis
             {% else %}
-                ❌ Não possui frete gratis
+                ✅ Primeira compra grátis
             {% endif %}
-        </td>
-        <td><a href="{{ produto.link }}" target="_blank">Ver Produto</a></td>
-    </tr>
+        </p>
+        <a href="{{ produto.link }}" class="link" target="_blank">Ver Produto</a>
+    </div>
     {% endfor %}
-</table>
+</div>
+
+<style>
+    /* Contêiner de Cards - com grid responsivo */
+    .produto-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 colunas em telas grandes */
+        gap: 20px;
+        padding: 20px;
+    }
+
+    /* Definições para telas pequenas (1 coluna) */
+    @media (max-width: 768px) {
+        .produto-container {
+            grid-template-columns: 1fr; /* 1 coluna em telas pequenas */
+        }
+    }
+
+    /* Estilo dos cards */
+    .produto-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        text-align: center;
+    }
+
+    .produto-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .produto-card h3 {
+        font-size: 1.2em;
+        margin-top: 10px;
+    }
+
+    .produto-card p {
+        margin: 5px 0;
+    }
+
+    .produto-card .frete {
+        font-size: 0.9em;
+        color: green;
+    }
+
+    .produto-card .link {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .produto-card .link:hover {
+        background-color: #0056b3;
+    }
+</style>

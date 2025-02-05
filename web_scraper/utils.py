@@ -1,6 +1,5 @@
 import re
 import time
-from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import selenium.webdriver as wb
 from selenium.webdriver.common.action_chains import ActionChains
@@ -12,9 +11,8 @@ URL_MERCADO_LIVRE = "https://lista.mercadolivre.com.br/"
 
 def iniciar_driver():
     options = wb.FirefoxOptions()
-    options.add_argument("--disable-gpu")  # Desabilitar GPU
     options.add_argument("--headless")  #  Não carrega UI
-    return webdriver.Firefox(options=options)
+    return wb.Firefox(options=options)
 
 def buscar_mercado_livre(termo_busca):
     driver = iniciar_driver()
@@ -28,18 +26,18 @@ def buscar_mercado_livre(termo_busca):
     
     for index, produto in enumerate(produtos):
         try:
-            nome = produto.find_element(By.XPATH, ".//h3/a").text
-            link = produto.find_element(By.XPATH, "//a[contains(@class, 'poly-component__title')]").get_attribute('href')
+            nome = produto.find_element(By.CSS_SELECTOR, ".poly-component__title").text
+            link = produto.find_element(By.CSS_SELECTOR, ".poly-component__title").get_attribute('href')
             preco = produto.find_element(By.CSS_SELECTOR, ".poly-price__current .andes-money-amount__fraction").text
             preco = float(preco.replace('.', '').replace(',', '.'))
             div_portada = produto.find_element(By.CLASS_NAME, "poly-card__portada")
-            
-            # Passar o mouse sobre o botão
             div_portada = produto.find_element(By.CLASS_NAME, "poly-card__portada")
             driver.execute_script("arguments[0].scrollIntoView();", div_portada)
             actions.move_to_element(div_portada).perform()
-            time.sleep(2)
-
+            time.sleep(3)
+            
+            # Passar o mouse sobre o botão
+            
             # Ajuste o XPath para encontrar todas as imagens do produto
             carousel = div_portada.find_element(By.CLASS_NAME, "andes-carousel-snapped__wrapper")
             imagens = carousel.find_elements(By.TAG_NAME, "img")
@@ -65,16 +63,11 @@ def buscar_mercado_livre(termo_busca):
                 shipping_element_additional_text = produto.find_element(By.CSS_SELECTOR, '.poly-shipping__additional_text').text
 
                 # Verifica se o texto "Chegará grátis amanhã" ou "por ser sua primeira compra" está presente
-                if "Frete grátis" in shipping_element or 'Frete grátispor ser sua primeira compra' in shipping_element:
-                    frete_gratis = True
-                    if "por ser sua primeira compra" in shipping_element_additional_text:
-                        frete_gratis = True  # Se ambos os textos estiverem presentes
-                    elif "Enviado pelo " in tipo_entrega:
-                        tipo_entrega = 'Full' # Caso o texto "Enviado pelo" seja encontrado
-                else:
-                    tipo_entrega = 'Padrao'  # Caso o "Frete grátis" não esteja presente
-                    frete_gratis = False  # Define que não é frete grátis
-
+                frete_gratis = "Frete grátis" in shipping_element or "Frete grátispor ser sua primeira compra" in shipping_element
+                if "Enviado pelo" in tipo_entrega:
+                    tipo_entrega = 'Full'
+                if not frete_gratis and tipo_entrega != 'Full':
+                    tipo_entrega = 'Padrao'
             except:
                 tipo_entrega = "Padrao"
                 frete_gratis = False

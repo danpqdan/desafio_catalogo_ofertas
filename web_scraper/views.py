@@ -9,7 +9,7 @@ def atualizar_produtos(request):
         termo_busca = request.POST.get('termo_busca')  # Obtém o valor do input de busca
         if termo_busca:
             buscar_mercado_livre(termo_busca=termo_busca)  # Chama a função de raspagem
-            return redirect('')  # Redireciona para a página de listagem dos produtos
+            return redirect('listar_produtos')  # Redireciona para a página de listagem dos produtos
     return render(request, 'atualizar_produtos.html')  # Caso não seja POST, retorna o formulário
 
 def listar_produtos(request):
@@ -18,22 +18,28 @@ def listar_produtos(request):
 
 def filtrar_produto(request):
     query = request.GET.get('q', '')  # Obtém o valor da busca
-    frete_gratis = request.GET.get('frete_gratis', None)  # Filtra produtos com frete grátis
-    full_delivery = request.GET.get('full_delivery', None)  # Filtra produtos entregues pelo Full
+    frete_gratis = request.GET.get('frete_gratis')  # Filtra produtos com frete grátis
+    tipo_entrega = request.GET.get('tipo_entrega', None)  # Filtra produtos entregues pelo Full
     ordenar_por = request.GET.get('ordenar_por', None)  # Ordenação por preço ou desconto
 
     produtos = Produto.objects.all()
 
     # Filtrando produtos por nome
     if query:
-        produtos = produtos.filter(nome__icontains=query)
+        try:
+            produtos = produtos.filter(nome__icontains=query)
+        except:
+            produtos = []
 
     # Filtrando produtos com frete grátis
-    if frete_gratis == 'sim':
-        produtos = produtos.filter(frete_gratis='sim')
+    if frete_gratis:
+        try:
+            produtos = produtos.filter(frete_gratis=True)
+        except:
+            produtos = []
     
     # Filtrando produtos entregues pelo Full
-    if full_delivery == 'sim':
+    if tipo_entrega == 'Full':
         produtos = produtos.filter(tipo_entrega='Full')
 
     # Ordenação
