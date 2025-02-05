@@ -1,13 +1,48 @@
-# Desafio Catálogo de Ofertas
+# Catálogo de Ofertas
 
-Este projeto é uma aplicação Django que realiza automação para coletar dados de outro site utilizando o Selenium.
+**Este projeto é uma aplicação Django que realiza automação para coletar dados de outro site utilizando o Selenium.**
+
+<details>
+    <summary> Sobre desafio </summary>
+Desafio Técnico
+Você irá desenvolver uma aplicação para uma empresa de Catálogo de Ofertas, utilizando o framework Django, que deverá aplicar raspagem de dados (utilizando o framework Selenium) no site do Mercado Livre (https://www.mercadolivre.com.br) para o produto de “Computador Gamer i7 16gb ssd 1tb”. Após a obtenção dos resultados, devemos listar os produtos encontrados em uma página Web informando os campos:
+- Imagem do Produto
+- Nome do Produto
+- Preço do Produto
+- Opção de Parcelamento
+- Link do Produto
+- Preço sem Desconto (se houver)
+- Percentual de Desconto (se houver)
+- Tipo de Entrega (Full ou Normal)
+- Frete Grátis (se houver)
+
+
+Devemos adicionar as seguintes opções de filtragem dos produtos encontrados para a facilidade de busca do Usuário:
+- Produtos com Frete Grátis
+- Produtos Entregues pelo Full
+
+Extra
+Como forma de facilitar o entendimento do usuário sobre quais podem ser os melhores produtos, devemos informar os produtos que possuem:
+- Maior Preço
+- Menor Preço
+- Maior Desconto Percentual
+
+Além disso, é interessante que esses dados sejam salvos em uma Banco de Dados relacional (dê preferência ao PostgreSQL), para identificarmos a estrutura desenvolvida por você.
+
+Referências:
+https://comoferta.com 
+https://ofertas.canaltech.com.br
+
+</details>
+
+--
 
 ## Requisitos
 
 - Python >= 3.12
 - Django
 - Selenium
-- Webdriver (Chrome, Firefox ou outro navegador)
+- Webdriver (Chrome, Firefox ou Edge)
 - django-environ
 
 
