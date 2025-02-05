@@ -2,6 +2,12 @@ import re
 import time
 from selenium.common.exceptions import NoSuchElementException
 import selenium.webdriver as wb
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.edge.service import Service as EdgeService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 import urllib.parse
@@ -9,13 +15,35 @@ from .models import ImagemProduto, Produto
 
 URL_MERCADO_LIVRE = "https://lista.mercadolivre.com.br/"
 
-def iniciar_driver():
-    options = wb.FirefoxOptions()
-    options.add_argument("--headless")  #  Não carrega UI
-    return wb.Firefox(options=options)
+def escolher_navegador(navegador="firefox"):
+    """ Inicia um driver Selenium compatível com Windows, macOS e Linux. """
+
+    options = None
+
+    if navegador.lower() == "firefox":
+        options = wb.FirefoxOptions()
+        options.add_argument("--headless")  # Modo sem interface gráfica
+        service = FirefoxService(GeckoDriverManager().install())
+        return wb.Firefox(service=service, options=options)
+
+    elif navegador.lower() == "chrome":
+        options = wb.ChromeOptions()
+        options.add_argument("--headless")
+        service = ChromeService(ChromeDriverManager().install())
+        return wb.Chrome(service=service, options=options)
+
+    elif navegador.lower() == "edge":
+        options = wb.EdgeOptions()
+        options.add_argument("--headless")
+        service = EdgeService(EdgeChromiumDriverManager().install())
+        return wb.Edge(service=service, options=options)
+
+    else:
+        raise ValueError("Navegador não suportado. Use 'firefox', 'chrome' ou 'edge'.")
+
 
 def buscar_mercado_livre(termo_busca):
-    driver = iniciar_driver()
+    driver = escolher_navegador("edge")
     actions = ActionChains(driver)
     campo_busca_variavel = termo_busca.replace(" ", "-")
     campo_busca_parse_sem_espaco = urllib.parse.quote(campo_busca_variavel)
