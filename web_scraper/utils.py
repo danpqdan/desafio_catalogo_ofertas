@@ -1,8 +1,8 @@
+import environ
 import os
 import time
 import urllib.parse
 import selenium.webdriver as wb
-from dotenv import load_dotenv
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
@@ -16,8 +16,10 @@ from .models import ImagemProduto, Produto
 
 URL_MERCADO_LIVRE = "https://lista.mercadolivre.com.br/"
 
-load_dotenv()
-navegador = os.getenv("BROWSER")
+env = environ.Env()
+environ.Env.read_env('.env')
+navegador = env('BROWSER')
+
 
 def escolher_navegador(browser):
     """ Inicia um driver Selenium compatível com Windows, macOS e Linux. """
