@@ -60,7 +60,8 @@ def buscar_mercado_livre(termo_busca):
     
     for index, produto in enumerate(produtos):
         try:
-            nome = produto.find_element(By.CSS_SELECTOR, ".poly-component__title").text
+            nome = produto.find_element(By.CSS_SELECTOR, ".poly-component__title")
+            print(nome.text)
             link = produto.find_element(By.CSS_SELECTOR, ".poly-component__title").get_attribute('href')
             preco = produto.find_element(By.CSS_SELECTOR, ".poly-price__current .andes-money-amount__fraction").text
             preco = float(preco.replace('.', '').replace(',', '.'))
