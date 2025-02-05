@@ -8,6 +8,8 @@ Este projeto é uma aplicação Django que realiza automação para coletar dado
 - Django
 - Selenium
 - Webdriver (Chrome, Firefox ou outro navegador)
+- django-environ
+
 
 ## Configuração do Ambiente Virtual
 
@@ -56,6 +58,21 @@ BROWSER=edge
 
 - chrome para o Google Chrome
 - firefox para o Mozilla Firefox
+
+**Lembre-se de configurar essas informações para conseguir iniciar a API**
+```bash
+DB_NAME="Nome-do-banco"
+DB_USER="Nome-de-usuario"
+DB_PASSWORD="Senha-do-banco"
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+**Realizar as migrações:**
+```bash
+python manage.py migrate
+```
+
 
 ### Passo 4: Rodando o Projeto
 
