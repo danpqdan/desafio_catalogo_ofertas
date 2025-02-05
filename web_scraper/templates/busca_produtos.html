@@ -91,6 +91,8 @@
             </p>
             <a href="{{ produto.link }}" class="link" target="_blank">Ver Produto</a>
         </div>
+        {% empty %}
+            <p>Nenhum produto encontrado.</p>
         {% endfor %}
     </div>
 
