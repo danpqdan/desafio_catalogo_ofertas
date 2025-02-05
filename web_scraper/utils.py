@@ -1,21 +1,53 @@
-import re
+import os
 import time
-from selenium.common.exceptions import NoSuchElementException
+import urllib.parse
 import selenium.webdriver as wb
+from dotenv import load_dotenv
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.edge.service import Service as EdgeService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-import urllib.parse
 from .models import ImagemProduto, Produto
 
 URL_MERCADO_LIVRE = "https://lista.mercadolivre.com.br/"
 
-def iniciar_driver():
-    options = wb.FirefoxOptions()
-    options.add_argument("--headless")  #  Não carrega UI
-    return wb.Firefox(options=options)
+load_dotenv()
+navegador = os.getenv("BROWSER")
+
+def escolher_navegador(browser):
+    """ Inicia um driver Selenium compatível com Windows, macOS e Linux. """
+
+    options = None
+
+    if navegador.lower() == "firefox":
+        options = wb.FirefoxOptions()
+        options.add_argument("--headless")  # Modo sem interface gráfica
+        service = FirefoxService(GeckoDriverManager().install())
+        return wb.Firefox(service=service, options=options)
+
+    elif navegador.lower() == "chrome":
+        options = wb.ChromeOptions()
+        options.add_argument("--headless")
+        service = ChromeService(ChromeDriverManager().install())
+        return wb.Chrome(service=service, options=options)
+
+    elif navegador.lower() == "edge":
+        options = wb.EdgeOptions()
+        options.add_argument("--headless")
+        service = EdgeService(EdgeChromiumDriverManager().install())
+        return wb.Edge(service=service, options=options)
+
+    else:
+        raise ValueError("Navegador não suportado. Use 'firefox', 'chrome' ou 'edge'.")
+
 
 def buscar_mercado_livre(termo_busca):
-    driver = iniciar_driver()
+    driver = escolher_navegador(browser=navegador)
     actions = ActionChains(driver)
     campo_busca_variavel = termo_busca.replace(" ", "-")
     campo_busca_parse_sem_espaco = urllib.parse.quote(campo_busca_variavel)
@@ -35,8 +67,6 @@ def buscar_mercado_livre(termo_busca):
             driver.execute_script("arguments[0].scrollIntoView();", div_portada)
             actions.move_to_element(div_portada).perform()
             time.sleep(3)
-            
-            # Passar o mouse sobre o botão
             
             # Ajuste o XPath para encontrar todas as imagens do produto
             carousel = div_portada.find_element(By.CLASS_NAME, "andes-carousel-snapped__wrapper")
@@ -85,11 +115,10 @@ def buscar_mercado_livre(termo_busca):
                 frete_gratis=frete_gratis
             )
 
-            # Itere sobre os elementos do Selenium e extraia o atributo 'src' para obter a URL da imagem
-            for url_imagem in image_urls:  # Lista com as URLs das imagens
+            for url_imagem in image_urls:
                 ImagemProduto.objects.create(
-                    produto=produto_model,  # Associando a imagem ao produto
-                    url_imagem=url_imagem  # A URL da imagem
+                    produto=produto_model,
+                    url_imagem=url_imagem
                 )
 
         
