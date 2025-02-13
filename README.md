@@ -39,11 +39,11 @@ https://ofertas.canaltech.com.br
 
 ## Requisitos
 
-- Python >= 3.12
-- Django
-- Selenium
-- Webdriver (Chrome, Firefox ou Edge)
-- django-environ
+- Django>=4.0,<5.0
+- psycopg2-binary>=2.9.0
+- selenium>=4.0
+- webdriver-manager>=4.0
+- python-environ>=0.4.0
 
 
 ## Configuração do Ambiente Virtual
